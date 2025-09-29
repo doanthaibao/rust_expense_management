@@ -102,8 +102,15 @@ impl HomeExpense {
     }
 
     pub(crate) fn delete(&mut self, id: i32) {
-        //TODO handle exception
-        self.expenses.remove(id as usize);
+        let maybe_index = self.expenses.iter().position(|e| e.id == id);
+        match maybe_index {
+            Some(index) => {
+                self.expenses.remove(index); // Remove the element at the found index
+                self.persist(); // Persist the changes
+            }
+            None => println!("Id is not existing"),
+        }
+        self.persist();
     }
 
     pub(crate) fn summarize(self, summary_type: SummaryType) {
