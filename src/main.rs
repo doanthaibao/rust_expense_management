@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-use crate::expense::{Category, Expense, HomeExpense};
+use crate::expense::{Category, Expense, HomeExpense, SummaryType};
 
 mod expense;
 
@@ -36,6 +36,14 @@ fn main() {
         }
         "list" => {
             home_expense.list()
+        }
+        "delete" => {
+            let deleted_id: i32 = args.get(2).unwrap().parse().expect("Id is required");
+            home_expense.delete(deleted_id);
+        }
+        "summary" => {
+            let summary_type: SummaryType = args.get(2).unwrap().parse().expect("SummaryType is required");
+            home_expense.summarize(summary_type);
         }
         _ => {}
     }

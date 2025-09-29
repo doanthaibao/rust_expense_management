@@ -15,7 +15,7 @@ pub(crate) enum Category {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-enum SummaryType {
+pub(crate) enum SummaryType {
     Category,
     Date,
 }
@@ -68,6 +68,16 @@ impl FromStr for Category {
         }
     }
 }
+impl FromStr for SummaryType {
+    type Err = ParseErrorKind;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "category" => Ok(SummaryType::Category),
+            "date" => Ok(SummaryType::Date),
+            _ => Err(Invalid),
+        }
+    }
+}
 impl HomeExpense {
     pub(crate) fn new(path: String) -> HomeExpense {
         let expenses = Self::load_expenses(&path).unwrap_or_else(|_| Vec::new());
@@ -79,7 +89,7 @@ impl HomeExpense {
         Ok(expenses)
     }
     pub(crate) fn add(&mut self, expense: Expense) {
-        let id = self.expenses.len() as i32;
+        let id = self.expenses.last().map_or(0, |x| x.id) + 1;
         let new_expense = Expense { id, ..expense };
         self.expenses.push(new_expense);
         self.persist()
@@ -91,9 +101,25 @@ impl HomeExpense {
         }
     }
 
-    fn delete(&mut self, id: i32) {}
+    pub(crate) fn delete(&mut self, id: i32) {
+        //TODO handle exception
+        self.expenses.remove(id as usize);
+    }
 
-    fn summarize(self, summary_type: SummaryType) {}
+    pub(crate) fn summarize(self, summary_type: SummaryType) {
+        match summary_type {
+            SummaryType::Category => self.summary_by_category(),
+            SummaryType::Date => self.summary_by_date(),
+        }
+    }
+
+    fn summary_by_category(self) {
+        //TODO group by category
+        //map to hash map
+    }
+    fn summary_by_date(self) {
+        //Group by date => map to hashmap
+    }
 
     fn persist(&self) {
         let json = serde_json::to_string(&self.expenses);
