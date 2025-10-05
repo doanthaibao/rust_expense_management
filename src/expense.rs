@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::expense::Category::{Entertainment, Food, Other, Transport};
 use chrono::NaiveDate;
 use chrono::format::ParseErrorKind;
@@ -12,6 +13,17 @@ pub(crate) enum Category {
     Transport,
     Entertainment,
     Other,
+}
+
+impl Category {
+    fn to_string(&self) -> String {
+        match self {
+            Food => "food".to_string(),
+            Transport => "transport".to_string(),
+            Entertainment => "entertainment".to_string(),
+            Other => "other".to_string(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -113,19 +125,37 @@ impl HomeExpense {
         self.persist();
     }
 
-    pub(crate) fn summarize(self, summary_type: SummaryType) {
+    pub(crate) fn summarize(&self, summary_type: SummaryType) {
         match summary_type {
             SummaryType::Category => self.summary_by_category(),
             SummaryType::Date => self.summary_by_date(),
         }
     }
 
-    fn summary_by_category(self) {
+    fn summary_by_category(&self) {
+        let mut hash_map: HashMap<String, f32> = HashMap::new();
+
+        for e in &self.expenses {
+            *hash_map.entry(e.category.to_string()).or_insert(0.0) += e.amount;
+        }
+
         //TODO group by category
         //map to hash map
+        for (k,v) in hash_map {
+
+            println!("Category: {}, total spent: {}", k, v);
+        }
     }
-    fn summary_by_date(self) {
+    fn summary_by_date(&self) {
         //Group by date => map to hashmap
+        let mut hash_map: HashMap<String, f32> = HashMap::new();
+        for e in &self.expenses {
+            *hash_map.entry(e.date.clone()).or_insert(0.0) += e.amount;
+        }
+        for (k,v) in hash_map {
+
+            println!("Date: {}, total spent: {}", k, v);
+        }
     }
 
     fn persist(&self) {

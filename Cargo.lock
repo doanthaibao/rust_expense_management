@@ -156,6 +156,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rust_expense_management"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "rustversion"
 version = "1.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -225,15 +234,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "test1"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "serde",
- "serde_json",
 ]
 
 [[package]]
