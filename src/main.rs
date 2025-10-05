@@ -41,6 +41,9 @@ fn main() {
             let deleted_id: i32 = args.get(2).unwrap().parse().expect("Id is required");
             home_expense.delete(deleted_id);
         }
+        "test" => {
+            println!("test 2")
+        }
         "summary" => {
             let summary_type: SummaryType = args.get(2).unwrap().parse().expect("SummaryType is required");
             home_expense.summarize(summary_type);
